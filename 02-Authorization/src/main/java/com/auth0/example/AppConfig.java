@@ -1,6 +1,8 @@
 package com.auth0.example;
 
 import com.auth0.spring.security.api.Auth0SecurityConfig;
+import com.auth0.spring.security.api.Auth0AuthenticationFilter;
+
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Configuration
@@ -36,13 +41,20 @@ public class AppConfig extends Auth0SecurityConfig {
         // include some Spring Boot Actuator endpoints to check metrics
         // add others or remove as you choose, this is just a sample config to illustrate
         // most specific rules must come - order is important (see Spring Security docs)
+
+
+//        logger.info("************************** calling authorizeRequests");
+
+        http.addFilterAfter( new AuthorizationFilter(), Auth0AuthenticationFilter.class);
+
         http.authorizeRequests()
                 .antMatchers("/ping", "/pong").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1/profiles").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/v1/profiles/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/v1/profiles/**").hasAnyAuthority("ROLE_ADMIN")
-                .antMatchers(HttpMethod.PUT, "/api/v1/profiles/**").hasAnyAuthority("ROLE_ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/api/v1/profiles/**").hasAnyAuthority("ROLE_ADMIN")
+//                .antMatchers("/api/v1/profiles").permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/v1/profiles").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(HttpMethod.GET, "/api/v1/profiles/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(HttpMethod.POST, "/api/v1/profiles/**").hasAnyAuthority("ROLE_ADMIN")
+//                .antMatchers(HttpMethod.PUT, "/api/v1/profiles/**").hasAnyAuthority("ROLE_ADMIN")
+//                .antMatchers(HttpMethod.DELETE, "/api/v1/profiles/**").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated();
     }
 
@@ -50,9 +62,7 @@ public class AppConfig extends Auth0SecurityConfig {
      * Only required for sample purposes..
      */
     String getAuthorityStrategy() {
-       return super.authorityStrategy;
+
+        return super.authorityStrategy;
     }
-
-
-
 }

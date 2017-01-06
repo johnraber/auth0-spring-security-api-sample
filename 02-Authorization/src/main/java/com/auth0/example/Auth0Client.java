@@ -5,6 +5,7 @@ import com.auth0.authentication.AuthenticationAPIClient;
 import com.auth0.authentication.result.UserProfile;
 import com.auth0.request.Request;
 import com.auth0.spring.security.api.Auth0JWTToken;
+// import com.auth0.jwt.JWT;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,6 +23,7 @@ public class Auth0Client {
         this.client = this.auth0.newAuthenticationAPIClient();
     }
 
+   // public String getUsername(JWT token) {
     public String getUsername(Auth0JWTToken token) {
         final Request<UserProfile> request = client.tokenInfo(token.getJwt());
         final UserProfile profile = request.execute();

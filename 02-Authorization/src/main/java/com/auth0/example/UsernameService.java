@@ -1,6 +1,7 @@
 package com.auth0.example;
 
-import com.auth0.spring.security.api.Auth0JWTToken;
+ import com.auth0.spring.security.api.Auth0JWTToken;
+// import com.auth0.jwt.JWT;
 import com.auth0.spring.security.api.Auth0UserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +29,14 @@ public class UsernameService {
     @Autowired
     private Auth0Client auth0Client;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String getUsername() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Auth0UserDetails principal = (Auth0UserDetails) authentication.getPrincipal();
         logger.info("Current user accessed Admin secured resource: " + principal.getUsername());
         // we already have the username.. but for this sample lets call Auth0 service anyway..
-        return auth0Client.getUsername((Auth0JWTToken) authentication);
+//        return auth0Client.getUsername((JWT) authentication);
+         return auth0Client.getUsername((Auth0JWTToken) authentication);
     }
 
 }

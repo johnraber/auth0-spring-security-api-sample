@@ -1,6 +1,7 @@
 package com.auth0.example;
 
 import com.auth0.spring.security.api.Auth0JWTToken;
+// import com.auth0.jwt.JWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,13 @@ public class ProfileController {
     @RequestMapping(value ="profiles", method = RequestMethod.POST)
     public Profile create(final @Validated @RequestBody Profile profile, final Principal principal) {
         logger.info("create invoked");
-        printGrantedAuthorities((Auth0JWTToken) principal);
-        if ("ROLES".equals(appConfig.getAuthorityStrategy())) {
+        //printGrantedAuthorities((JWT) principal);
+//        printGrantedAuthorities((Auth0JWTToken) principal);
+//        if ("ROLES".equals(appConfig.getAuthorityStrategy())) {
             final String username = usernameService.getUsername();
             // log username of user requesting profile creation
             logger.info("User with email: " + username + " creating new profile");
-        }
+      //  }
         return profileService.create(profile);
     }
 
@@ -68,6 +70,7 @@ public class ProfileController {
     /**
      * Simple demonstration of how Principal info can be accessed
      */
+   // private void printGrantedAuthorities(final JWT principal) {
     private void printGrantedAuthorities(final Auth0JWTToken principal) {
         for(final GrantedAuthority grantedAuthority: principal.getAuthorities()) {
             final String authority = grantedAuthority.getAuthority();

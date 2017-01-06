@@ -10,3 +10,4 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 auth0-spring-security-api-sample.iml
+auth0.properties
