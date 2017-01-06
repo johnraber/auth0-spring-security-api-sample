@@ -30,6 +30,18 @@ public class AppConfig extends Auth0SecurityConfig {
         return new Auth0Client(clientId, issuer);
     }
 
+
+//    @Bean
+//    public DataSource dataSource()
+//    {
+//        BasicDataSource dataSource = new BasicDataSource();
+//        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
+//        dataSource.setUrl(env.getProperty("jdbc.url"));
+//        dataSource.setUsername(env.getProperty("jdbc.username"));
+//        dataSource.setPassword(env.getProperty("jdbc.password"));
+//        return dataSource;
+//    }
+
     /**
      *  Our API Configuration - for Profile CRUD operations
      *
@@ -45,10 +57,10 @@ public class AppConfig extends Auth0SecurityConfig {
 
 //        logger.info("************************** calling authorizeRequests");
 
-        http.addFilterAfter( new AuthorizationFilter(), Auth0AuthenticationFilter.class);
+//        http.addFilterBefore( new AuthorizationFilter(), Auth0AuthenticationFilter.class);
 
         http.authorizeRequests()
-                .antMatchers("/ping", "/pong").permitAll()
+//                .antMatchers("/ping", "/pong").permitAll()
 //                .antMatchers("/api/v1/profiles").permitAll()
 //                .antMatchers(HttpMethod.GET, "/api/v1/profiles").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 //                .antMatchers(HttpMethod.GET, "/api/v1/profiles/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")

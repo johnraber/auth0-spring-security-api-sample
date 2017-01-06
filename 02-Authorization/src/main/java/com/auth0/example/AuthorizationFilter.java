@@ -7,12 +7,18 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 
+//import org.springframework.stereotype.Repository;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AuthorizationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -20,7 +26,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private final String insert_auth0_user_query = "INSERT INTO idl_user.auth0_user(auth0_id, emails) VALUES ($auth0_id, $emails);";
     private final String insert_idl_user_query = "INSERT INTO idl_user.user(auth0_id) VALUES ($auth0_id);";
     private final String insert_app_user_query = "INSERT INTO idl_user.app_user(user_id, app_id, roles, permissions) VALUES ($user_id, $app_id, $roles, $permissions);";
-    private final String auth0_user_exist_query = "SELECT auth0_id FROM idl_user.auth0_user WHERE auth0_id = $id LIMIT 1;";
+   // private final String auth0_user_exist_query = "SELECT auth0_id FROM idl_user.auth0_user WHERE auth0_id = $id LIMIT 1;";
+   private final String auth0_user_exist_query = "SELECT auth0_id FROM idl_user.auth0_user WHERE auth0_id = auth0|5848d2b84c07ab1b49a6ac6d LIMIT 1;";
     private final String find_user_query = "SELECT id FROM idl_user.user WHERE auth0_id = $auth0_id LIMIT 1;";
     private final String get_app_user_roles_and_permissions_query = "SELECT roles, permissions FROM idl_user.app_user au, idl_user.user u WHERE u.auth0_id = $auth0_id and au.user_id = u.id and au.app_id = $app_id;";
 
@@ -32,7 +39,19 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 //        Authentication auth = new UsernamePasswordAuthenticationToken("sub", "password", ImmutableList.of(new SimpleGrantedAuthority("ROLE_API")));
 //        SecurityContextHolder.getContext().setAuthentication(auth);
         logger.info("************************** doFilterInternal");
-        filterChain.doFilter(request, response);
+
+        try {
+
+//            Object[] args = new Object[]{"some_auth0_id"};
+
+            String existing_user_auth0_id = jdbcTemplate.queryForObject(auth0_user_exist_query, null, String.class);
+            logger.info("********************* found existing user: ", existing_user_auth0_id);
+            filterChain.doFilter(request, response);
+        }
+        catch (Exception ex) {
+            logger.error("got error accessing db: ", ex);
+            throw ex;
+        }
     }
 
 
