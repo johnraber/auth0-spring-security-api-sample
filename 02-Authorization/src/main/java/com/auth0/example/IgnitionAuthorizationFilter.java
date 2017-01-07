@@ -15,7 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuthorizationFilter extends OncePerRequestFilter {
+import com.auth0.spring.security.api.Auth0UserDetails;
+
+import com.auth0.SessionUtils;
+//import com.auth0.NonceUtils;
+
+public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -40,12 +45,18 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 //        SecurityContextHolder.getContext().setAuthentication(auth);
         logger.info("************************** doFilterInternal");
 
+//        final Auth0User user = SessionUtils.getAuth0User(request);
+
+//        NonceUtils.addNonceToStorage(req);
+//        final String clientId = getServletContext().getInitParameter("auth0.client_id");
+//        final String clientDomain = getServletContext().getInitParameter("auth0.domain");
+
         try {
 
 //            Object[] args = new Object[]{"some_auth0_id"};
 
-            String existing_user_auth0_id = jdbcTemplate.queryForObject(auth0_user_exist_query, null, String.class);
-            logger.info("********************* found existing user: ", existing_user_auth0_id);
+//            String existing_user_auth0_id = jdbcTemplate.queryForObject(auth0_user_exist_query, null, String.class);
+//            logger.info("********************* found existing user: ", existing_user_auth0_id);
             filterChain.doFilter(request, response);
         }
         catch (Exception ex) {
