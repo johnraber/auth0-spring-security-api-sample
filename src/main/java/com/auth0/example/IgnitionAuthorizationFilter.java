@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.auth0.spring.security.api.Auth0UserDetails;
 
-import com.auth0.SessionUtils;
+//import com.auth0.SessionUtils;
 //import com.auth0.NonceUtils;
 
 public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
