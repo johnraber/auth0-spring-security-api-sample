@@ -2,6 +2,7 @@ package com.auth0.example;
 
 import com.auth0.spring.security.api.Auth0SecurityConfig;
 import com.auth0.spring.security.api.Auth0AuthenticationFilter;
+import org.springframework.security.web.session.SessionManagementFilter;
 
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +47,9 @@ public class AppConfig extends Auth0SecurityConfig {
 
 //        logger.info("************************** calling authorizeRequests");
 
-        http.addFilterAfter( new com.auth0.example.IgnitionAuthorizationFilter(), Auth0AuthenticationFilter.class);
+//        http.addFilterAfter( new com.auth0.example.IgnitionAuthorizationFilter(), Auth0AuthenticationFilter.class);
+
+        http.addFilterAfter( new com.auth0.example.IgnitionAuthorizationFilter(), SessionManagementFilter.class);
 
         http.authorizeRequests()
                 .antMatchers("/ping", "/pong").permitAll()

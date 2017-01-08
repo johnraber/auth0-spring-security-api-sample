@@ -6,6 +6,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
+import java.security.Principal;
+import org.springframework.security.core.Authentication;
+
 
 //import org.springframework.stereotype.Repository;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,7 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import com.auth0.authentication.AuthenticationAPIClient;
+//import com.auth0.authentication.result.UserProfile;
+
+import com.auth0.spring.security.api.Auth0JWTToken;
 import com.auth0.spring.security.api.Auth0UserDetails;
+
 
 //import com.auth0.SessionUtils;
 //import com.auth0.NonceUtils;
@@ -41,15 +49,40 @@ public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-//        Authentication auth = new UsernamePasswordAuthenticationToken("sub", "password", ImmutableList.of(new SimpleGrantedAuthority("ROLE_API")));
-//        SecurityContextHolder.getContext().setAuthentication(auth);
+
         logger.info("************************** doFilterInternal");
 
-//        final Auth0User user = SessionUtils.getAuth0User(request);
 
-//        NonceUtils.addNonceToStorage(req);
-//        final String clientId = getServletContext().getInitParameter("auth0.client_id");
-//        final String clientDomain = getServletContext().getInitParameter("auth0.domain");
+//        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Auth0JWTToken) authentication
+//        final Auth0UserDetails principal = (Auth0UserDetails) authentication.getPrincipal();
+//        Principal principal = request.getUserPrincipal();
+
+        Auth0JWTToken auth0JWTToken = (Auth0JWTToken) request.getUserPrincipal();
+        logger.info("*********** auth0JWTToken: ", auth0JWTToken );
+
+        Auth0UserDetails auth0UserDetails = (Auth0UserDetails) auth0JWTToken.getPrincipal();
+        logger.info("*********** auth0UserDetails: ", auth0UserDetails );
+  //  user_id , name,  email,  email_verified true
+        //    Collection<GrantedAuthority> authorities = auth0JWTToken.getAuthorities()  OR
+        //    Collection<GrantedAuthority> authorities = auth0UserDetails.getAuthorities()  OR
+
+//        auth0JWTToken.addGrantedAuthorities("ADMIN");
+
+        /**
+         Collection<SimpleGrantedAuthority> oldAuthorities = (Collection<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_ANOTHER");
+        List<SimpleGrantedAuthority> updatedAuthorities = new ArrayList<SimpleGrantedAuthority>();
+        updatedAuthorities.add(authority);
+        updatedAuthorities.addAll(oldAuthorities);
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
+                        SecurityContextHolder.getContext().getAuthentication().getCredentials(),
+                        updatedAuthorities)
+        );
+         */
 
         try {
 
