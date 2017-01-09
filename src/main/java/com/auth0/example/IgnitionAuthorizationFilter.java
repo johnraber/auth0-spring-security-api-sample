@@ -1,5 +1,7 @@
 package com.auth0.example;
 
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.FilterChain;
@@ -8,9 +10,11 @@ import java.io.IOException;
 
 import java.security.Principal;
 import org.springframework.security.core.Authentication;
-
-
 //import org.springframework.stereotype.Repository;
+// import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import com.auth0.authentication.AuthenticationAPIClient;
-//import com.auth0.authentication.result.UserProfile;
 
 import com.auth0.spring.security.api.Auth0JWTToken;
 import com.auth0.spring.security.api.Auth0UserDetails;
 
-
-//import com.auth0.SessionUtils;
-//import com.auth0.NonceUtils;
 
 public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
 
@@ -58,11 +57,23 @@ public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
 //        final Auth0UserDetails principal = (Auth0UserDetails) authentication.getPrincipal();
 //        Principal principal = request.getUserPrincipal();
 
-        Auth0JWTToken auth0JWTToken = (Auth0JWTToken) request.getUserPrincipal();
-        logger.info("*********** auth0JWTToken: ", auth0JWTToken );
+        Auth0JWTToken auth0_jwt_token = (Auth0JWTToken) request.getUserPrincipal();
+        logger.info("*********** auth0JWTToken: ", auth0_jwt_token.toString() );
 
-        Auth0UserDetails auth0UserDetails = (Auth0UserDetails) auth0JWTToken.getPrincipal();
-        logger.info("*********** auth0UserDetails: ", auth0UserDetails );
+        Auth0UserDetails auth0_user_details = (Auth0UserDetails) auth0_jwt_token.getPrincipal();
+        logger.info("*********** auth0UserDetails: ", auth0_user_details.toString() );
+
+//        SecurityContextHolder.getContext().setAuthentication(
+//                new Auth0JWTToken(auth0JWTToken) );
+
+        GrantedAuthority application_based_authority = new SimpleGrantedAuthority("ROLE_ADMIN");
+        Collection granted_auths = auth0_user_details.getAuthorities();
+        granted_auths.add(application_based_authority);
+
+//        auth0_user_details.getAuthorities().add( application_based_autority );
+//        Auth0UserDetails enhanced_auth0_user_details = new Auth0UserDetails(auth0_user_details.);
+//        auth0_jwt_token.setPrincipal(enhanced_auth0_user_details);
+
   //  user_id , name,  email,  email_verified true
         //    Collection<GrantedAuthority> authorities = auth0JWTToken.getAuthorities()  OR
         //    Collection<GrantedAuthority> authorities = auth0UserDetails.getAuthorities()  OR
