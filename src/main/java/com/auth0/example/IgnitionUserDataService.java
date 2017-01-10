@@ -1,24 +1,21 @@
 package com.auth0.example;
 
 import com.auth0.spring.security.api.Auth0UserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
-@Configuration
+
 @Service
 public class IgnitionUserDataService {
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private final String insert_auth0_user_query = "INSERT INTO idl_user.auth0_user(auth0_id, emails) VALUES ($auth0_id, $emails);";
@@ -31,6 +28,18 @@ public class IgnitionUserDataService {
 
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public IgnitionUserDataService() {
+
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/idl");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("postgres");
+
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
 
     public void evaluate_user_add_authorities( Auth0UserDetails auth0_user_details) {
 

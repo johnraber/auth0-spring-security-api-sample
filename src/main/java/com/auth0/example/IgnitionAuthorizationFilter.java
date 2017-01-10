@@ -7,8 +7,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import org.slf4j.Logger;
@@ -17,17 +15,16 @@ import org.slf4j.LoggerFactory;
 import com.auth0.spring.security.api.Auth0JWTToken;
 import com.auth0.spring.security.api.Auth0UserDetails;
 
-import com.auth0.example.IgnitionUserDataService;
 
-
-@Configuration
 public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private IgnitionUserDataService iuds;
+    IgnitionUserDataService ignitionUserDataService;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public IgnitionAuthorizationFilter() {
+        this.ignitionUserDataService = new IgnitionUserDataService();
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -39,11 +36,7 @@ public class IgnitionAuthorizationFilter extends OncePerRequestFilter {
         Auth0JWTToken auth0_jwt_token = (Auth0JWTToken) request.getUserPrincipal();
         Auth0UserDetails auth0_user_details = (Auth0UserDetails) auth0_jwt_token.getPrincipal();
 
-//        GrantedAuthority application_based_authority = new SimpleGrantedAuthority("ROLE_ADMIN");
-//        Collection granted_auths = auth0_user_details.getAuthorities();
-//        granted_auths.add(application_based_authority);
-
-        iuds.evaluate_user_add_authorities(auth0_user_details);
+        ignitionUserDataService.evaluate_user_add_authorities(auth0_user_details);
 
         filterChain.doFilter(request, response);
     }
