@@ -1,7 +1,6 @@
 package com.auth0.example;
 
 import com.auth0.spring.security.api.Auth0SecurityConfig;
-import com.auth0.spring.security.api.Auth0AuthenticationFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -12,9 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 
 @Configuration
