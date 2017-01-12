@@ -62,7 +62,7 @@ public class IgnitionUserDataService {
 
             namedParameters = new MapSqlParameterSource().addValue("auth0_id", existing_user.getId() );
             // TODO this service id should be an application property and MUST correlate to the service id
-            //   for this application/service platform in the idl.service table which supports versioning
+            //   for this application/service platform in the idl.service table which supports also supports versioning
             namedParameters.addValue("service_id", 1);
             IgnitionRolesPermissions user_app_roles_permissions =  jdbcTemplate.queryForObject(get_app_user_roles_and_permissions_query,
                     namedParameters, new IgnitionRolesPermissionsRowMapper() );
@@ -77,6 +77,8 @@ public class IgnitionUserDataService {
         } catch (org.springframework.dao.EmptyResultDataAccessException no_existing_user) {
 
             // if Auth0 user does not exist, create the user in both the Auth0 user table and the Ignition user table
+            // note that the Ignition user may exist due to pre-populating the db and sending out an invite
+            // to the user
 
             String email = (String) auth0_user_details.getAuth0Attribute("email");
             MapSqlParameterSource namedParameters = new MapSqlParameterSource().addValue("auth0_id", auth0_pk);
@@ -84,6 +86,10 @@ public class IgnitionUserDataService {
             int updated_rows = jdbcTemplate.update(insert_auth0_user, namedParameters);
             logger.info("inserted a new user from Auth0 into Ignition db idl_user.auth0_user");
 
+
+            // TODO check to see if there is an Ignition user with the same email as the incoming new Auth0 user AND
+            //   that Ignition user does NOT have existing auth0_id reference.   If so, update the existing Ignition
+            //   user's null auth0_id
 
             updated_rows = jdbcTemplate.update(insert_idl_user, namedParameters);
             logger.info("inserted a new Ignition user into Ignition db idl_user.user");
