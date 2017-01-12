@@ -77,27 +77,27 @@ ALTER TABLE idl_user.user
 -- Support possibility of a single idl user to multiple auth0 users if not linking accounts without
 -- exluding support for a user with multiple id_user entries if driven off multiple auth0_user ids
 -- with no linking of accounts
-CREATE TABLE idl_user.user_auth0_user
-(
-  id bigserial NOT NULL,
-  user_id bigint NOT NULL,
-  auth0_id character varying(96) NOT NULL,
-  created_at timestamp without time zone default (now() at time zone 'utc'),
-  updated_at timestamp without time zone default (now() at time zone 'utc'),
-  CONSTRAINT user_auth0_user_pkey PRIMARY KEY (id),
-  CONSTRAINT user_auth0_user_user_id_fkey FOREIGN KEY (user_id)
-    REFERENCES idl_user.user (id) MATCH SIMPLE
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT user_auth0_user_auth0_id_fkey FOREIGN KEY (auth0_id)
-    REFERENCES idl_user.auth0_user (auth0_id) MATCH SIMPLE
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT user_auth0_user_user_id_auth0_id_key UNIQUE (user_id, auth0_id)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE idl_user.user_auth0_user
-  OWNER TO postgres;
+-- CREATE TABLE idl_user.user_auth0_user
+-- (
+--   id bigserial NOT NULL,
+--   user_id bigint NOT NULL,
+--   auth0_id character varying(96) NOT NULL,
+--   created_at timestamp without time zone default (now() at time zone 'utc'),
+--   updated_at timestamp without time zone default (now() at time zone 'utc'),
+--   CONSTRAINT user_auth0_user_pkey PRIMARY KEY (id),
+--   CONSTRAINT user_auth0_user_user_id_fkey FOREIGN KEY (user_id)
+--     REFERENCES idl_user.user (id) MATCH SIMPLE
+--     ON UPDATE CASCADE ON DELETE CASCADE,
+--   CONSTRAINT user_auth0_user_auth0_id_fkey FOREIGN KEY (auth0_id)
+--     REFERENCES idl_user.auth0_user (auth0_id) MATCH SIMPLE
+--     ON UPDATE CASCADE ON DELETE CASCADE,
+--   CONSTRAINT user_auth0_user_user_id_auth0_id_key UNIQUE (user_id, auth0_id)
+-- )
+-- WITH (
+--   OIDS=FALSE
+-- );
+-- ALTER TABLE idl_user.user_auth0_user
+--   OWNER TO postgres;
 
 
 -- A service platform or application
