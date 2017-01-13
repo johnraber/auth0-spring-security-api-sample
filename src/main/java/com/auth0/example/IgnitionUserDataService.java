@@ -70,6 +70,12 @@ public class IgnitionUserDataService {
             create_datasource();
         }
 
+        boolean auth0_verified = (boolean) auth0_user_details.getAuth0Attribute("email_verified");
+
+        if(auth0_verified == false) {
+            return;
+        }
+
         String auth0_pk = (String) auth0_user_details.getAuth0Attribute("user_id");
 
         try {
