@@ -1,11 +1,21 @@
---CREATE ROLE john LOGIN
+--CREATE ROLE postgres LOGIN
 --  NOSUPERUSER INHERIT CREATEDB CREATEROLE NOREPLICATION;
---GRANT rds_superuser TO john;
+--GRANT rds_superuser TO postgres;
 
-DROP SCHEMA idl CASCADE;
+-- DROP DATABASE idl;
+--
+-- CREATE DATABASE idl
+-- WITH OWNER = postgres
+-- ENCODING = 'UTF8'
+-- TABLESPACE = pg_default
+-- LC_COLLATE = 'en_US.UTF-8'
+-- LC_CTYPE = 'en_US.UTF-8'
+-- CONNECTION LIMIT = -1;
+
+-- DROP SCHEMA idl CASCADE;
 CREATE SCHEMA IF NOT EXISTS idl AUTHORIZATION postgres;
 
-DROP SCHEMA idl_user CASCADE;
+-- DROP SCHEMA idl_user CASCADE;
 CREATE SCHEMA IF NOT EXISTS idl_user AUTHORIZATION postgres;
 
 -- organization
@@ -160,7 +170,7 @@ CREATE INDEX service_registry_roles_idx
   (roles);
 
 
-DROP SCHEMA idl_portal CASCADE;
+-- DROP SCHEMA idl_portal CASCADE;
 CREATE SCHEMA idl_portal AUTHORIZATION postgres;
 
 CREATE TABLE idl_portal.portal_ap

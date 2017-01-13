@@ -1,6 +1,11 @@
 package com.auth0.example;
 
 import com.auth0.spring.security.api.Auth0UserDetails;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -15,10 +20,16 @@ import java.util.Collection;
 import com.google.gson.Gson;
 
 
+@Configuration
 @Service
+@PropertySources({
+        @PropertySource("classpath:auth0.properties"),
+        @PropertySource("classpath:db.properties")
+})
 public class IgnitionUserDataService {
 
     private NamedParameterJdbcTemplate jdbcTemplate;
+    private ConfigurableEnvironment env;
 
     private final String insert_auth0_user = "INSERT INTO idl_user.auth0_user(auth0_id, email) VALUES ( :auth0_id, :email)";
     private final String insert_idl_user = "INSERT INTO idl_user.user(auth0_id) VALUES (:auth0_id)";
@@ -34,17 +45,30 @@ public class IgnitionUserDataService {
 
     public IgnitionUserDataService() {
 
+    }
+
+    private void create_datasource() {
+
+        AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext(IgnitionUserDataService.class);
+        env = context.getEnvironment();
+
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/idl");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgres");
+        dataSource.setDriverClassName(env.getProperty("db.driver.classname") );
+        dataSource.setUrl("jdbc:postgresql://" + env.getProperty("db.url") + ":" + env.getProperty("db.port") + "/" +
+                env.getProperty("db.name") );
+        dataSource.setUsername(env.getProperty("db.username") );
+        dataSource.setPassword(env.getProperty("db.password") );
 
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
 
     public void evaluate_user_add_authorities(Auth0UserDetails auth0_user_details) {
+
+        if(jdbcTemplate == null) {
+            create_datasource();
+        }
 
         String auth0_pk = (String) auth0_user_details.getAuth0Attribute("user_id");
 
@@ -89,7 +113,8 @@ public class IgnitionUserDataService {
 
             // TODO check to see if there is an Ignition user with the same email as the incoming new Auth0 user AND
             //   that Ignition user does NOT have existing auth0_id reference.   If so, update the existing Ignition
-            //   user's null auth0_id
+            //   user's null auth0_id.  This supports putting Ignition users in db and sending out email invites to
+            //   correlate them when they signup via Auth0
 
             updated_rows = jdbcTemplate.update(insert_idl_user, namedParameters);
             logger.info("inserted a new Ignition user into Ignition db idl_user.user");
@@ -105,10 +130,10 @@ public class IgnitionUserDataService {
                     new IgnitionUserRowMapper() );
 
             namedParameters = new MapSqlParameterSource().addValue("user_id", ignition_user.getId() );
-            // TODO read in the auth0.clientId from auth0.properties file and find service by service.third_party_auth_app_id ===  auth0.clientId
+            // TODO find service by service.third_party_auth_app_id ==  env.getProperty("auth0.clientId")
             //     then use that service.id  for the service_id below
             namedParameters.addValue("service_id", 1);
-            namedParameters.addValue("third_party_client_id", "bW4hAsU35OkxECU2voRssgZ5GWQIvVhp");
+            namedParameters.addValue("third_party_client_id", env.getProperty("auth0.clientId") );
 
             // TODO do some cool logic to determine the roles a user should have
             namedParameters.addValue("roles",  gson.toJson("[ROLE_ADMIN]")  );
