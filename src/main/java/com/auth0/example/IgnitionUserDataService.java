@@ -32,6 +32,9 @@ public class IgnitionUserDataService {
     private ConfigurableEnvironment env;
 
     private final String insert_auth0_user = "INSERT INTO idl_user.auth0_user(auth0_id, email) VALUES ( :auth0_id, :email)";
+
+    // TODO discuss whether or not to use email from auth0 ... may depend on flow such as signup driven from
+    //   Ignition marketing so don't automatically over-ride the email
     private final String insert_idl_user = "INSERT INTO idl_user.user(auth0_id) VALUES (:auth0_id)";
     private final String insert_app_user = "INSERT INTO idl.service_registry(user_id, service_id, roles, permissions, third_party_client_id) VALUES (:user_id, :service_id, :roles::json, :permissions::json, :third_party_client_id)";
     private final String auth0_user_exist = "SELECT * FROM idl_user.auth0_user WHERE auth0_id = :auth0_id";
@@ -80,6 +83,8 @@ public class IgnitionUserDataService {
 
         try {
             MapSqlParameterSource namedParameters = new MapSqlParameterSource().addValue("auth0_id", auth0_pk);
+
+            // throws if no existing auth0 user
             AuthZeroUser existing_user =  jdbcTemplate.queryForObject(auth0_user_exist, namedParameters,
                     new AuthZeroUserRowMapper() );
 

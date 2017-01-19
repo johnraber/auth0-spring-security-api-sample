@@ -12,10 +12,10 @@
 -- LC_CTYPE = 'en_US.UTF-8'
 -- CONNECTION LIMIT = -1;
 
--- DROP SCHEMA idl CASCADE;
+DROP SCHEMA idl CASCADE;
 CREATE SCHEMA IF NOT EXISTS idl AUTHORIZATION postgres;
 
--- DROP SCHEMA idl_user CASCADE;
+DROP SCHEMA idl_user CASCADE;
 CREATE SCHEMA IF NOT EXISTS idl_user AUTHORIZATION postgres;
 
 -- organization
@@ -148,9 +148,11 @@ CREATE TABLE idl.service_registry
   updated_at timestamp without time zone default (now() at time zone 'utc'),
   CONSTRAINT service_registry_pkey PRIMARY KEY (id),
   CONSTRAINT service_registry_user_id_fkey FOREIGN KEY (user_id)
-    REFERENCES idl_user.user (id) MATCH SIMPLE,
+    REFERENCES idl_user.user (id) MATCH SIMPLE
+    ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT service_registry_service_id_fkey FOREIGN KEY (service_id)
-    REFERENCES idl.service (id) MATCH SIMPLE,
+    REFERENCES idl.service (id) MATCH SIMPLE
+    ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT service_registry_user_id_service_id_key UNIQUE (user_id, service_id)
 )
 WITH (
@@ -170,7 +172,7 @@ CREATE INDEX service_registry_roles_idx
   (roles);
 
 
--- DROP SCHEMA idl_portal CASCADE;
+DROP SCHEMA idl_portal CASCADE;
 CREATE SCHEMA idl_portal AUTHORIZATION postgres;
 
 CREATE TABLE idl_portal.portal_ap
