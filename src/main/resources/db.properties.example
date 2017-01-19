@@ -1,0 +1,6 @@
+db.url=<amazon RDS instance dns name or public IP>
+db.port=
+db.name=idl
+db.driver.classname=org.postgresql.Driver
+db.username=
+db.password=
